@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+
+{% block title %}Social Hub | TaskTrack{% endblock %}
+
+{% block content %}
+<style>
+    .social-container {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        min-height: calc(100vh - 120px);
+        padding: 20px;
+    }
+
+    .social-layout {
+        width: 100%;
+        max-width: 1300px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+    }
+
+    /* Common Card Styling */
+    .social-card {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 30px;
+        padding: 40px;
+        color: white;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        display: flex;
+        flex-direction: column;
+        min-height: 75vh;
+    }
+
+    .card-header {
+        margin-bottom: 30px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 20px;
+    }
+
+    .card-header h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .card-header p {
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.6);
+        margin-top: 5px;
+    }
+
+    /* List Item Styling */
+    .scroll-area {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding-right: 10px;
+    }
+
+    .user-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 15px;
+        transition: 0.3s;
+    }
+
+    .user-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateX(5px);
+    }
+
+    .user-main {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .rank-badge {
+        font-weight: 800;
+        color: #60a5fa;
+        font-size: 1.1rem;
+        min-width: 35px;
+    }
+
+    .status-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #10b981;
+        box-shadow: 0 0 10px #10b981;
+    }
+
+    .exp-label {
+        font-weight: 700;
+        color: #fbbf24;
+        background: rgba(251, 191, 36, 0.1);
+        padding: 6px 14px;
+        border-radius: 12px;
+        font-size: 0.9rem;
+    }
+
+    /* Add Friend Form */
+    .add-friend-form {
+        margin-bottom: 25px;
+        display: flex;
+        gap: 10px;
+    }
+
+    .add-friend-form input {
+        flex-grow: 1;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        padding: 12px 15px;
+        color: white;
+        outline: none;
+    }
+
+    .btn-action {
+        background: linear-gradient(to right, #2563eb, #60a5fa);
+        border: none;
+        padding: 12px 20px;
+        border-radius: 12px;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .btn-action:hover {
+        opacity: 0.9;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .social-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="social-container">
+    <div class="social-layout">
+        
+        <!-- Friends Section -->
+        <div class="social-card">
+            <div class="card-header">
+                <h2><span>👥</span> Your Friends</h2>
+                <p>Collaborate and track progress with your circle.</p>
+            </div>
+
+            <form class="add-friend-form">
+                <input type="text" placeholder="Friend's username or email...">
+                <button type="button" class="btn-action">Add</button>
+            </form>
+
+            <div class="scroll-area">
+                <!-- Mock Friends - Logic to be integrated with DB -->
+                <div class="user-item">
+                    <div class="user-main">
+                        <div class="status-dot"></div>
+                        <span style="font-weight: 500;">User_One</span>
+                    </div>
+                    <span class="exp-label">Active</span>
+                </div>
+                
+                <div class="user-item" style="opacity: 0.6;">
+                    <div class="user-main">
+                        <div class="status-dot" style="background: #94a3b8; box-shadow: none;"></div>
+                        <span style="font-weight: 500;">TaskHelper</span>
+                    </div>
+                    <span class="exp-label" style="background: rgba(255,255,255,0.05); color: #cbd5e1;">Offline</span>
+                </div>
+
+                <div style="text-align: center; margin-top: 30px; opacity: 0.4;">
+                    <p style="font-size: 0.85rem;">Only you can see your friends list.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Section -->
+        <div class="social-card">
+            <div class="card-header">
+                <h2><span>🏆</span> Global Rankings</h2>
+                <p>The top TaskTrackers worldwide.</p>
+            </div>
+
+            <div class="scroll-area">
+                {% for user in users %}
+                <div class="user-item">
+                    <div class="user-main">
+                        <span class="rank-badge">#{{ loop.index }}</span>
+                        <span style="font-weight: 500;">{{ user.username }}</span>
+                    </div>
+                    <span class="exp-label">{{ user.exp }} XP</span>
+                </div>
+                {% else %}
+                <div style="text-align: center; margin-top: 50px; opacity: 0.5;">
+                    <p>No rankings available yet.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div style="margin-top: 20px; text-align: center;">
+                <a href="{{ url_for('dashboard') }}" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.9rem;">← Back to Dashboard</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

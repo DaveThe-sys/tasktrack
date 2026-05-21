@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile | TaskTrack{% endblock %}
+
+{% block content %}
+<style>
+    .profile-container {
+        width: 100%;
+        max-width: 500px;
+        margin: 40px auto;
+        color: white;
+    }
+
+    .glass-panel {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 25px;
+        padding: 40px;
+        text-align: center;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .avatar-circle {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, #60a5fa, #2563eb);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 3rem;
+        margin: 0 auto 20px;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+    }
+
+    .user-name {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .user-email {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+        margin-bottom: 25px;
+    }
+
+    .level-badge {
+        display: inline-block;
+        padding: 6px 16px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 30px;
+    }
+
+    .exp-box {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 25px;
+        border-radius: 20px;
+        text-align: left;
+    }
+
+    .exp-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        margin-bottom: 10px;
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .progress-bar-bg {
+        height: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    .progress-bar-fill {
+        height: 100%;
+        background: linear-gradient(to right, #60a5fa, #2563eb);
+        transition: width 0.5s ease-out;
+    }
+
+    .next-level-hint {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: 12px;
+        display: block;
+        text-align: center;
+    }
+
+    .btn-back {
+        display: inline-block;
+        margin-top: 30px;
+        color: rgba(255, 255, 255, 0.6);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: 0.3s;
+    }
+
+    .btn-back:hover {
+        color: white;
+    }
+</style>
+
+<div class="profile-container">
+    <div class="glass-panel">
+        <div class="avatar-circle">👤</div>
+        
+        <h2 class="user-name">{{ user.username }}</h2>
+        <div class="user-email">{{ user.email if user.email else 'No email set' }}</div>
+        
+        <div class="level-badge">
+            Level {{ (user.exp // 100) + 1 }} Member
+        </div>
+
+        <div class="exp-box">
+            <div class="exp-header">
+                <span>Progress</span>
+                <span>{{ user.exp }} EXP</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" style="width: {{ user.exp % 100 }}%;"></div>
+            </div>
+            <span class="next-level-hint">
+                {{ 100 - (user.exp % 100) }} EXP more to reach Level {{ (user.exp // 100) + 2 }}
+            </span>
+        </div>
+
+        <a href="/dashboard" class="btn-back">← Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

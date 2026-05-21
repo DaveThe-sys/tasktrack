@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .otp-display {
+        background: rgba(96, 165, 250, 0.2);
+        border: 1px dashed #60a5fa;
+        color: #60a5fa;
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: 700;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+</style>
+
+<div class="auth-box">
+    <h1>Security Check</h1>
+    <p class="subtitle">Enter the code displayed below to proceed.</p>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div id="otp-alert-box">
+        {% for message in messages %}
+            <div class="otp-display">{{ message }}</div>
+        {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+
+    <form action="/verify" method="POST">
+        <div class="form-group">
+            <label>Verification Code</label>
+            <input type="text" name="otp" placeholder="000000" maxlength="6" required 
+                style="text-align: center; letter-spacing: 8px; font-size: 1.4rem;">
+        </div>
+        <button type="submit">Verify Identity</button>
+    </form>
+</div>
+
+<script>
+    // Logic to make the OTP disappear after 20 seconds
+    setTimeout(function() {
+        const alertBox = document.getElementById('otp-alert-box');
+        if (alertBox) {
+            alertBox.style.transition = "opacity 1s ease";
+            alertBox.style.opacity = "0";
+            setTimeout(() => alertBox.remove(), 1000); // Remove from DOM after fade
+        }
+    }, 20000); // 20000ms = 20 seconds
+</script>
+{% endblock %}

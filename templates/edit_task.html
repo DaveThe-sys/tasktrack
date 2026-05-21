@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Task | TaskTrack{% endblock %}
+
+{% block content %}
+<style>
+    .edit-box {
+        width: 450px;
+        padding: 35px;
+        border-radius: 25px;
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 25px;
+        font-weight: 600;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.7);
+        padding-left: 5px;
+    }
+
+    input,
+    textarea,
+    select {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        outline: none;
+        font-size: 1rem;
+    }
+
+    input::placeholder, textarea::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+        /* Fix for the date picker calendar icon color */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+    
+        select option {
+            background: #1e3a8a;
+            color: white;
+        }
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        cursor: pointer;
+    }
+
+    select option {
+        background: #1e3a8a;
+        color: white;
+    }
+
+    .button-group {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 25px;
+    }
+
+    button {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(to right, #2563eb, #60a5fa);
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        opacity: 0.9;
+        transform: scale(1.02);
+    }
+
+    .btn-delete {
+        background: rgba(239, 68, 68, 0.2);
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        color: #fca5a5;
+    }
+
+    .btn-delete:hover {
+        background: rgba(239, 68, 68, 0.4);
+        color: white;
+    }
+
+    .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 15px;
+        color: rgba(255, 255, 255, 0.6);
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="edit-box">
+    <h1>Edit Task</h1>
+
+    <form method="POST" action="{{ url_for('edit_task', task_id=task.id) }}">
+        
+        <div class="form-group">
+            <label>Task Title</label>
+            <input type="text" name="title" value="{{ task.title }}" required>
+        </div>
+
+        <div class="form-group">
+            <label>Description</label>
+            <textarea name="description" rows="3">{{ task.description }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Category</label>
+            <input type="text" name="category" value="{{ task.category }}" list="categories" required>
+            <datalist id="categories">
+                <option value="Work">
+                <option value="School">
+                <option value="Personal">
+                <option value="Health">
+            </datalist>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+                <label>Priority</label>
+                <select name="priority">
+                    <option value="Low" {% if task.priority == 'Low' %}selected{% endif %}>Low</option>
+                    <option value="Medium" {% if task.priority == 'Medium' %}selected{% endif %}>Medium</option>
+                    <option value="High" {% if task.priority == 'High' %}selected{% endif %}>High</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Deadline</label>
+                <input type="date" name="due_date" value="{{ task.due_date }}" required>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button type="submit">Update Changes</button>
+            <button type="button" class="btn-delete" onclick="if(confirm('Delete this task?')) window.location.href='/delete_task/{{ task.id }}'">Delete Task</button>
+        </div>
+
+        <a href="/dashboard" class="back-link">Cancel</a>
+    </form>
+</div>
+{% endblock %}

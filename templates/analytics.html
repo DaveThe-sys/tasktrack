@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="analytics-fixed-screen">
+    <style>
+        .analytics-fixed-screen {
+            height: calc(100vh - 60px);
+            width: 100%;
+            overflow: hidden;
+            padding: 20px 40px;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, sans-serif;
+            color: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-section {
+            flex: 0 0 auto;
+            margin-bottom: 20px;
+        }
+
+        .header-section h1 {
+            font-size: 28px;
+            font-weight: 900;
+            margin: 0;
+            letter-spacing: -1px;
+        }
+
+        /* 2. Horizontal Row - Cards */
+        .metrics-row {
+            display: flex;
+            flex-direction: row;
+            gap: 15px;
+            flex: 0 0 auto;
+            margin-bottom: 20px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 15px 20px;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .metric-label {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 900;
+            margin: 0;
+        }
+
+        .charts-row {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .chart-box {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 24px;
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .chart-box h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .canvas-wrapper {
+            flex: 1;
+            min-height: 0;
+            position: relative;
+        }
+
+        .progress-svg {
+            width: 50px;
+            height: 50px;
+            transform: rotate(-90deg);
+        }
+    </style>
+
+    <div class="header-section">
+        <h1>Performance <span style="color: #60a5fa;">Analytics</span></h1>
+    </div>
+
+    <div class="metrics-row">
+        <div class="glass-card">
+            <div style="position: relative; width: 50px; height: 50px;">
+                <svg viewBox="0 0 80 80" class="progress-svg">
+                    <circle cx="40" cy="40" r="35" stroke="rgba(255,255,255,0.1)" stroke-width="10" fill="none" />
+                    <circle cx="40" cy="40" r="35" stroke="#60a5fa" stroke-width="10" fill="none" 
+                            stroke-dasharray="219.9" 
+                            stroke-dashoffset="{{ 219.9 * (1 - (efficiency|default(0)/100)) }}"
+                            stroke-linecap="round" />
+                </svg>
+                <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800;">
+                    {{ efficiency|default(0) }}%
+                </div>
+            </div>
+            <div>
+                <p class="metric-label">Efficiency</p>
+                <p class="metric-value" style="font-size: 16px;">Productivity</p>
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <div style="font-size: 24px; background: rgba(16,185,129,0.2); padding: 10px; border-radius: 12px;">✅</div>
+            <div>
+                <p class="metric-label">Completed</p>
+                <p class="metric-value">{{ completed|default(0) }}</p>
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <div style="font-size: 24px; background: rgba(245,158,11,0.2); padding: 10px; border-radius: 12px;">⏳</div>
+            <div>
+                <p class="metric-label">Pending</p>
+                <p class="metric-value">{{ pending|default(0) }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="charts-row">
+        <div class="chart-box">
+            <h3>Status Breakdown</h3>
+            <div class="canvas-wrapper">
+                <canvas id="completionChart"></canvas>
+            </div>
+        </div>
+        <div class="chart-box">
+            <h3>Task Categories</h3>
+            <div class="canvas-wrapper">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    window.onload = function() {
+        const config = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: 'white', font: { size: 10 } } } }
+        };
+
+        // Donut
+        new Chart(document.getElementById('completionChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Done', 'Pending'],
+                datasets: [{
+                    data: [{{ completed|default(0) }}, {{ pending|default(0) }}],
+                    backgroundColor: ['#10b981', '#f59e0b'],
+                    borderWidth: 0
+                }]
+            },
+            options: config
+        });
+
+        const catData = {{ categories|tojson|safe }};
+        new Chart(document.getElementById('categoryChart'), {
+            type: 'bar',
+            data: {
+                labels: catData.map(d => d.category || 'General'),
+                datasets: [{
+                    data: catData.map(d => d.count),
+                    backgroundColor: '#60a5fa',
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                ...config,
+                scales: {
+                    y: { ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    x: { ticks: { color: 'white' }, grid: { display: false } }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+    };
+</script>
+{% endblock %}

@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block title %}Task History | TaskTrack{% endblock %}
+
+{% block content %}
+<style>
+    /* Centering wrapper for the main content */
+    .history-container {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start; /* Changed to flex-start for long lists */
+        width: 100%;
+        min-height: calc(100vh - 150px);
+        padding-top: 40px;
+    }
+
+    .history-box {
+        width: 100%;
+        max-width: 900px;
+        padding: 40px;
+        border-radius: 32px;
+        background: rgba(15, 23, 42, 0.6); /* Deep navy glass to match dashboard */
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 20px;
+    }
+
+    .history-header h2 {
+        font-size: 1.8rem;
+        font-weight: 800;
+        background: linear-gradient(to right, #fff, #94a3b8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .history-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .history-item {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 22px;
+        border-radius: 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s ease;
+    }
+
+    .history-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateX(8px);
+        border-color: rgba(96, 165, 250, 0.3);
+    }
+
+    .task-info h4 {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #e2e8f0;
+    }
+
+    .task-info p {
+        margin: 8px 0 0;
+        font-size: 0.85rem;
+        color: #60a5fa; /* Blue accent for the date */
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .status-badge {
+        background: rgba(16, 185, 129, 0.15);
+        color: #6ee7b7;
+        padding: 8px 16px;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: rgba(255, 255, 255, 0.3);
+    }
+
+    .back-link {
+        margin-top: 35px;
+        text-align: center;
+    }
+
+    .back-link a {
+        color: rgba(255, 255, 255, 0.5);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.3s;
+        font-weight: 500;
+    }
+
+    .back-link a:hover {
+        color: #60a5fa;
+    }
+</style>
+
+<div class="history-container">
+    <div class="history-box">
+        <div class="history-header">
+            <h2>Mission Archive</h2>
+            <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; opacity: 0.6;">Completed</span>
+        </div>
+
+        <div class="history-list">
+            {% for task in tasks %}
+            <div class="history-item">
+                <div class="task-info">
+                    <h4>{{ task.title }}</h4>
+                    <p>
+                        <span>📅</span> 
+                        {% if task.completed_at %}
+                            {{ task.completed_at }}
+                        {% else %}
+                            {{ task.created_at }}
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="status-badge">SUCCESS +25 XP</div>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <p style="font-size: 1.2rem; margin-bottom: 10px;">The archive is empty.</p>
+                <p style="font-size: 0.9rem;">No completed missions found. Time to get to work!</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="back-link">
+            <a href="{{ url_for('dashboard') }}">← Return to Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | TaskTrack</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #60a5fa;
+            --primary-dark: #2563eb;
+            --glass: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #020617;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Mesh Background */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 140%;
+            height: 140%;
+            background: radial-gradient(circle at 80% 20%, #1e3a8a 0%, transparent 40%),
+                        radial-gradient(circle at 20% 80%, #1d4ed8 0%, transparent 40%),
+                        radial-gradient(circle at 50% 50%, #0f172a 0%, transparent 100%);
+            z-index: -1;
+            animation: meshMove 20s infinite alternate ease-in-out;
+        }
+
+        @keyframes meshMove {
+            0% { transform: translate(-5%, -5%); }
+            100% { transform: translate(10%, 10%); }
+        }
+
+        .auth-box {
+            width: 100%;
+            max-width: 480px;
+            padding: 45px;
+            border-radius: 32px;
+            background: var(--glass);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--border);
+            color: white;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            margin: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 35px;
+            font-size: 0.95rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group { margin-bottom: 20px; }
+        .full-width { grid-column: span 2; }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--primary);
+            padding-left: 4px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid transparent;
+            border-radius: 14px;
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            outline: none;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        input:focus {
+            background: rgba(0, 0, 0, 0.4);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(96, 165, 250, 0.2);
+            transform: translateY(-2px);
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 16px;
+            background: #fff;
+            color: #020617;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        button:hover {
+            transform: scale(1.02);
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        .footer-links {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .footer-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-links a:hover { color: var(--primary); }
+
+        .inner-alert {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+            padding: 12px;
+            border-radius: 14px;
+            font-size: 0.85rem;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* ABOUT MODAL STYLES */
+        .about-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(15px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .about-card {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            padding: 40px;
+            border-radius: 24px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+
+        .about-content {
+            text-align: left;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 500px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-box">
+        <h1>Begin Journey</h1>
+        <p class="subtitle">Create your Account.</p>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="inner-alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="/register" method="POST">
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label for="username">Codename</label>
+                    <input type="text" id="username" name="username" placeholder="Unique username" required>
+                </div>
+                <div class="form-group full-width">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Email address" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">Verify Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" placeholder="••••••••" required>
+                </div>
+            </div>
+            <button type="submit">Create Account</button>
+        </form>
+
+        <div class="footer-links">
+            Existing User? <a href="/login">Return to Login</a>
+            <br><br>
+            <a href="javascript:void(0)" onclick="openAbout()" style="opacity: 0.5; font-size: 0.8rem; font-weight: 400;">About Us & Objective</a>
+        </div>
+    </div>
+
+    <div class="about-overlay" id="aboutOverlay" onclick="closeAbout()">
+        <div class="about-card" onclick="event.stopPropagation()">
+            <h2 style="color: #60a5fa; margin-bottom: 10px;">Our Objective</h2>
+            <div class="about-content">
+                <p><strong>TaskTrack</strong> is designed to bridge the gap between complex technical learning and efficient productivity.</p>
+                <br>
+                <p>Our primary objective is to provide a streamlined command center where students can manage networking configurations, track academic milestones, and stay updated with NBA analytics—all within a single, futuristic interface.</p>
+            </div>
+            <button onclick="closeAbout()" style="width: auto; padding: 10px 30px;">Close</button>
+        </div>
+    </div>
+
+    <script>
+        function openAbout() {
+            document.getElementById('aboutOverlay').style.display = 'flex';
+        }
+        function closeAbout() {
+            document.getElementById('aboutOverlay').style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>

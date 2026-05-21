@@ -1,0 +1,345 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard | TaskTrack{% endblock %}
+
+{% block content %}
+<style>
+    .dashboard-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        width: 100%;
+        min-height: calc(100vh - 100px);
+        padding: 20px 0;
+    }
+
+    .dashboard-container {
+        width: 100%;
+        max-width: 900px;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .motivation-text {
+        text-align: center;
+        margin-bottom: 5px;
+        font-style: italic;
+        font-size: 1.1rem;
+        color: #dbeafe; /* Light blue accent */
+        min-height: 1.5em;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        font-weight: 300;
+        letter-spacing: 0.5px;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    .stat-card {
+        background: rgba(30, 58, 138, 0.4);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        padding: 25px 15px;
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #60a5fa, #2563eb);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        background: rgba(30, 58, 138, 0.6);
+        border-color: rgba(96, 165, 250, 0.5);
+    }
+
+    .stat-card h3 {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .stat-card p {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #fff;
+        background: linear-gradient(to bottom, #ffffff, #93c5fd);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
+    }
+
+    .task-section {
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        padding: 35px;
+        border-radius: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .section-header h2 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #f8fafc;
+        border-left: 4px solid #3b82f6;
+        padding-left: 15px;
+    }
+
+    .add-btn {
+        background: linear-gradient(135deg, #1e40af, #2563eb);
+        padding: 12px 24px;
+        border-radius: 14px;
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .add-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+        filter: brightness(1.1);
+    }
+
+    .task-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .task-card {
+        background: rgba(255, 255, 255, 0.03);
+        padding: 22px;
+        border-radius: 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .task-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(96, 165, 250, 0.3);
+        transform: scale(1.01) translateX(5px);
+    }
+
+    .task-info h4 {
+        margin-bottom: 8px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #e2e8f0;
+    }
+
+    .task-meta {
+        font-size: 0.85rem;
+        color: rgba(148, 163, 184, 0.8);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .priority-tag {
+        padding: 4px 12px;
+        border-radius: 10px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .priority-high {
+        background: rgba(239, 68, 68, 0.15);
+        color: #fca5a5;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .priority-medium {
+        background: rgba(245, 158, 11, 0.15);
+        color: #fcd34d;
+        border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .priority-low {
+        background: rgba(16, 185, 129, 0.15);
+        color: #6ee7b7;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .action-group {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .btn-edit {
+        text-decoration: none;
+        font-size: 1.2rem;
+        opacity: 0.5;
+        transition: all 0.3s;
+        filter: grayscale(1);
+    }
+
+    .btn-edit:hover {
+        opacity: 1;
+        transform: rotate(90deg);
+        filter: grayscale(0);
+    }
+
+    .btn-delete {
+        text-decoration: none;
+        font-size: 1.2rem;
+        opacity: 0.5;
+        transition: all 0.3s;
+        filter: grayscale(1);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+    }
+
+    .btn-delete:hover {
+        opacity: 1;
+        transform: scale(1.2);
+        filter: grayscale(0);
+    }
+
+    .btn-complete {
+        background: linear-gradient(135deg, #059669, #10b981);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+    }
+
+    .btn-complete:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        filter: brightness(1.1);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: rgba(255, 255, 255, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="dashboard-wrapper">
+    <div class="dashboard-container">
+        <p class="motivation-text" id="motivation-quote"></p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Current EXP</h3>
+                <p>{{ stats.exp if stats else 0 }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Tasks Pending</h3>
+                <p>{{ tasks|length }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Rank</h3>
+                <p style="font-size: 1.5rem; margin-top: 10px;">🛡️ Novice</p>
+            </div>
+        </div>
+
+        <div class="task-section">
+            <div class="section-header">
+                <h2>Active Missions</h2>
+                <a href="{{ url_for('add_task') }}" class="add-btn">+ New Task</a>
+            </div>
+
+            <div class="task-list">
+                {% for task in tasks %}
+                <div class="task-card">
+                    <div class="task-info">
+                        <h4>{{ task.title }}</h4>
+                        <div class="task-meta">
+                            <span class="priority-tag priority-{{ task.priority|lower }}">{{ task.priority }}</span>
+                            <span>📅 {{ task.due_date }}</span>
+                            <span style="color: #60a5fa;">📁 {{ task.category }}</span>
+                        </div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{{ url_for('edit_task', task_id=task.id) }}" class="btn-edit" title="Edit Task">⚙️</a>
+                        
+                        <a href="{{ url_for('delete_task', task_id=task.id) }}"
+                        class="btn-delete"
+                        title="Delete Task"
+                        onclick="return confirm('Discard this mission? This cannot be undone.')">
+                        🗑️
+                        </a>
+
+                        <form action="{{ url_for('complete_task', id=task.id) }}" method="POST" style="margin: 0;">
+                            <button type="submit" class="btn-complete">Complete</button>
+                        </form>
+                    </div>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <p style="font-size: 1.2rem; margin-bottom: 10px; color: #94a3b8;">No active missions found.</p>
+                    <p style="font-size: 0.9rem;">The path is clear. Add a task to begin your journey!</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const quotes = [
+        "Believe you can and you're halfway there.",
+        "Your future is created by what you do today, not tomorrow.",
+        "The secret of getting ahead is getting started.",
+        "Don't stop until you're proud.",
+        "Productivity is being able to do things that you were never able to do before.",
+        "Success is the sum of small efforts repeated day in and day out.",
+        "Focus on being productive instead of busy.",
+        "Action is the foundational key to all success."
+    ];
+
+    const quoteElement = document.getElementById('motivation-quote');
+    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    quoteElement.textContent = `"${randomQuote}"`;
+</script>
+{% endblock %}
